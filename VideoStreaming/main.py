@@ -1,5 +1,6 @@
 # main.py# import the necessary packages
 from flask import Flask, render_template, Response, send_from_directory
+from flask_socketio import SocketIO
 from camera import VideoCamera
 import camera
 import time
