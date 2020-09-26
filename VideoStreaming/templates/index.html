@@ -2,33 +2,35 @@
 <html>
   <head>
     <link rel= "stylesheet" type= "text/css" href="{{ url_for('static',filename='styles/index.css') }}">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
     <script src="{{ url_for('static',filename='scripts/script.js') }}" ></script>
+    <script type="text/javascript" charset="utf-8">
+      var socket = io();
+      socket.on('connect', function() {
+          socket.emit('my event', {data: 'I\'m connected!'});
+      });
+  </script>
   </head>
   <body>
     <div class="grid-container">
         <div id="videoplayback" class="VIDEO"><img id="bg" src="{{ url_for('video_feed') }}"></div>
-
-            <div id="mapsdiv" class="MAP">
-                <!-- API_KEY: AIzaSyBSDl8S2NWX5GwJHvLaQ2PMVJSSxur033Q -->
-                <iframe
-                        style="border:0; width:100%; height:100%"
+        <div id="mapsdiv" class="MAP">
+            <!-- API_KEY: AIzaSyBSDl8S2NWX5GwJHvLaQ2PMVJSSxur033Q -->
+            <iframe
+              style="border:0; width:100%; height:100%"
               frameborder="0" style="border:0"
               src="https://www.google.com/maps/embed/v1/directions?key=AIzaSyBSDl8S2NWX5GwJHvLaQ2PMVJSSxur033Q&origin=Oslo+Norway&destination=Telemark+Norway&avoid=tolls|highways" allowfullscreen>
             </iframe>
-            </div>
-
-
+        </div>
         <div id="settingsdiv" class="SETTINGS">
           <h1 style="color:black;">Settings</h1>
           <button id="drowsybutton" type="button" onclick="onDrowsy()">Simulate Drowsy</button><br>
           <input type="checkbox" id="alarmtoggle" name="alarmtoggle">
           <label for="alarmtoggle">Alarm System</label><br>
         </div>
-
         <div id="notifsdiv" class="NOTIF">
             <h1 style="color:black;">Status Notifications</h1>
-            <ul id="notiflist" style="list-style-type:none; text-align: center;">
-            </ul>
+            <ul id="notiflist" style="list-style-type:none; text-align: center;"></ul>
         </div>
     </div>
   </body>

@@ -5,11 +5,11 @@ import dlib
 import cv2
 import time
 from datetime import datetime
+from flask_socketio import SocketIO
 
 class VideoCamera(object):
     
-    def __init__(self):
-        
+    def __init__(self, socket=None):
         self.video = cv2.VideoCapture(0)
         self.eye_thresh = 0.25
         self.yawn_thres = 0.55
@@ -23,7 +23,7 @@ class VideoCamera(object):
         
         self.flag = 0
         self.timestamp_record = []
-        
+        self.socket = socket
         # ## Readme
         # #New--code--Addded are the lines I have added in current code <br>
         #
@@ -111,10 +111,20 @@ class VideoCamera(object):
 
         if(self.alertCount[-1] > self.max_thres or (total_time < 10 and self.alertOccurence >= 10)):
             print('Alert is Emergency')
+            self.emit_drowsy_signal("emergency")
         else:
+            self.emit_drowsy_signal("standard")
             print('Give Nearby Recommendations')
 
-    def get_frame(self,start_time):
+    def emit_drowsy_signal(self, signal_type):
+        if self.socket is not None:
+            data = {'data':signal_type}
+            self.socket.emit('drowsy_alert', data)
+    
+    def emit_graph_data(self, data_tuple):
+        pass  
+
+    def get_frame(self):
         
         ret, frame = self.video.read()
         frame = imutils.resize(frame, width=450)
