@@ -8,7 +8,15 @@
     <div class="grid-container">
         <div id="videoplayback" class="VIDEO"><img id="bg" src="{{ url_for('video_feed') }}"></div>
 
-        <div id="mapsdiv" class="MAP">MAP HERE</div>
+            <div id="mapsdiv" class="MAP">
+                <!-- API_KEY: AIzaSyBSDl8S2NWX5GwJHvLaQ2PMVJSSxur033Q -->
+                <iframe
+                        style="border:0; width:100%; height:100%"
+              frameborder="0" style="border:0"
+              src="https://www.google.com/maps/embed/v1/search?key=AIzaSyBSDl8S2NWX5GwJHvLaQ2PMVJSSxur033Q&q=record+stores+in+Seattle" allowfullscreen>
+            </iframe>
+            </div>
+
 
         <div id="settingsdiv" class="SETTINGS">
           <h1 style="color:black;">Settings</h1>
