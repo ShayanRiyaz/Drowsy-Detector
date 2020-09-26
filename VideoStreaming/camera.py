@@ -153,3 +153,5 @@ class VideoCamera(object):
         # New---Code--Added
         ret, jpeg = cv2.imencode('.jpg', frame)
         return jpeg.tobytes()
+#To be addded when we are instantiating the class
+#dates,snaps = "class_instance".generateRealTimeStats()
