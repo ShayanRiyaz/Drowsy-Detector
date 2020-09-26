@@ -1,4 +1,10 @@
-function onDrowsy() {
+var socket = io();
+socket.on('drowsy_alert', (data) => {
+    onDrowsy(data);
+});
+
+function onDrowsy(data) {
+    console.log(data);
     // Get the time of drowsiness
     const now = new Date();
     const hours = String(now.getHours()).padStart(2, '0');

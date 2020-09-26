@@ -9,6 +9,7 @@ import cv2
 #timestamp_record = []
 
 app = Flask(__name__)
+socketio = SocketIO(app)
 
 
 @app.route('/')
@@ -35,13 +36,19 @@ def gen(camera):
                 
 @app.route('/video_feed')
 def video_feed():
-    return Response(gen(VideoCamera()),
+    return Response(gen(VideoCamera(socket=socketio)),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route('/sounds/<path:filename>')
 def get_sound(filename):
     return send_from_directory('/static/sounds/', filename)
 
+@socketio.on('my event')
+def handle_message(json):
+    print('received json: ' + str(json))
+
 if __name__ == '__main__':
     # defining server ip address and port
-    app.run(host='0.0.0.0',port='5000', debug=True)
+    # app.run(host='0.0.0.0',port='5000', debug=True)
+    # Same utility as above but with support for sockets
+    socketio.run(app, host='0.0.0.0', port='5000', debug=True)
