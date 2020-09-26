@@ -5,7 +5,6 @@ import camera
 import time
 import cv2
 
-
 timestamp_record = []
 
 app = Flask(__name__)
@@ -13,6 +12,10 @@ app = Flask(__name__)
 def index():
     # rendering webpage
     return render_template('index.html')
+
+@app.route('/about')
+def about():
+    return render_template('aboutPage.html')
     
 def gen(camera):
     start_time = time.time() #New---Code--Added
