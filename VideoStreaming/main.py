@@ -18,6 +18,7 @@ def index():
 @app.route('/about')
 def about():
     return render_template('aboutPage.html')
+
     
 def gen(camera):
     #start_time = time.time() #New---Code--Added
