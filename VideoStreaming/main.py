@@ -5,9 +5,11 @@ import camera
 import time
 import cv2
 
-timestamp_record = []
+#timestamp_record = []
 
 app = Flask(__name__)
+
+
 @app.route('/')
 def index():
     # rendering webpage
@@ -18,13 +20,14 @@ def about():
     return render_template('aboutPage.html')
     
 def gen(camera):
-    start_time = time.time() #New---Code--Added
-    timestamp_record.append(start_time) #New---Code--Added
+    #start_time = time.time() #New---Code--Added
+    #timestamp_record.append(start_time) #New---Code--Added
     while True:
         #get camera frame
-        frame = camera.get_frame(start_time,timestamp_record)
+        frame = camera.get_frame()#start_time,timestamp_record)
         yield (b'--frame\r\n'
                 b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+        
         key = cv2.waitKey(1) & 0xFF
         if key == ord("q"):
             break
