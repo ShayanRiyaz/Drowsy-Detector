@@ -37,7 +37,7 @@ class Recommendations(object):
 
     def filterType(self,response,id_):
 
-        proximity = 20 
+        #proximity = 20 
         types = response['types']
         loc = response['geometry']['location']
         lat2,lon2 = float(loc['lat']),float(loc['lng'])
@@ -46,8 +46,6 @@ class Recommendations(object):
 
         json_obj = {'types':types,'loc':loc,'name':name,'open':open_cond}
 
-        #print(response)
-        #print('-'*10)
         if(open_cond):
 
             for key in self.keywords_filter:
