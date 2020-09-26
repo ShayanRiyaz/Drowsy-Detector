@@ -2,6 +2,11 @@
 from flask import Flask, render_template, Response
 from camera import VideoCamera
 import camera
+import time
+import cv2
+
+
+timestamp_record = []
 
 app = Flask(__name__)
 @app.route('/')
@@ -10,12 +15,16 @@ def index():
     return render_template('index.html')
     
 def gen(camera):
-
+    start_time = time.time() #New---Code--Added
+    timestamp_record.append(start_time) #New---Code--Added
     while True:
         #get camera frame
-        frame = camera.get_frame()
+        frame = camera.get_frame(start_time,timestamp_record)
         yield (b'--frame\r\n'
                 b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord("q"):
+            break
                 
 @app.route('/video_feed')
 def video_feed():
