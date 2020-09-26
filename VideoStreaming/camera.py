@@ -11,17 +11,16 @@ class VideoCamera(object):
     
     def __init__(self, socket=None):
         self.video = cv2.VideoCapture(0)
-        self.thresh = 0.25
+        self.eye_thresh = 0.25
+        self.yawn_thres = 0.55
         self.frame_check = 20
         self.detect = dlib.get_frontal_face_detector()
-        # Dat file is the crux of the code
-        self.predict = dlib.shape_predictor(
-            "./shape_predictor_68_face_landmarks.dat")
+        self.predict = dlib.shape_predictor("./shape_predictor_68_face_landmarks.dat")
 
-        (self.lStart,
-         self.lEnd) = face_utils.FACIAL_LANDMARKS_68_IDXS["left_eye"]
-        (self.rStart,
-         self.rEnd) = face_utils.FACIAL_LANDMARKS_68_IDXS["right_eye"]
+        (self.lStart,self.lEnd) = face_utils.FACIAL_LANDMARKS_68_IDXS["left_eye"]
+        (self.rStart,self.rEnd) = face_utils.FACIAL_LANDMARKS_68_IDXS["right_eye"]
+        (self.mStart,self.mEnd) = face_utils.FACIAL_LANDMARKS_68_IDXS["mouth"]
+        
         self.flag = 0
         self.timestamp_record = []
         self.socket = socket
@@ -86,6 +85,14 @@ class VideoCamera(object):
         C = distance.euclidean(eye[0], eye[3])
         self.ear = (A + B) / (2.0 * C)
         return self.ear
+    
+    def mouth_aspect_ratio(self,m):
+    
+        A = distance.euclidean(m[3],m[9])
+        B = distance.euclidean(m[0],m[7])
+        ear = A/B
+    
+        return ear
 
     def checkSeverity(self, start_time):
         
@@ -127,19 +134,29 @@ class VideoCamera(object):
         self.timestamp_record.append(start_time) #New---Code--Added
 
         subjects = self.detect(gray, 0)
+        
         for subject in subjects:
             shape = self.predict(gray, subject)
             shape = face_utils.shape_to_np(shape)  # converting to NumPy Array
             leftEye = shape[self.lStart:self.lEnd]
             rightEye = shape[self.rStart:self.rEnd]
+            mouth = shape[self.mStart:self.mEnd]
+            
             leftEAR = self.eye_aspect_ratio(leftEye)
             rightEAR = self.eye_aspect_ratio(rightEye)
+            mouthEAR = self.mouth_aspect_ratio(mouth)
+            
             self.ear = (leftEAR + rightEAR) / 2.0
+            
             leftEyeHull = cv2.convexHull(leftEye)
             rightEyeHull = cv2.convexHull(rightEye)
+            mouthHull = cv2.convexHull(mouth)
+            
             cv2.drawContours(frame, [leftEyeHull], -1, (0, 255, 0), 1)
             cv2.drawContours(frame, [rightEyeHull], -1, (0, 255, 0), 1)
-            if self.ear < self.thresh:
+            cv2.drawContours(frame,[mouthHull],-1,(0,255,255),1)
+            
+            if self.ear < self.eye_thresh or mouthEAR >= self.yawn_thres:
                 self.flag += 1
                 # print(self.flag)
                 if self.flag >= self.frame_check:
@@ -156,7 +173,7 @@ class VideoCamera(object):
         if(self.alert_flag):
             self.count += 1
 
-            if(self.count % 15 == 0):
+            if(self.count % 12 == 0):
                 self.alertOccurence += 1
                 self.checkSeverity(start_time)
 
@@ -164,5 +181,6 @@ class VideoCamera(object):
         # New---Code--Added
         ret, jpeg = cv2.imencode('.jpg', frame)
         return jpeg.tobytes()
+    
 #To be addded when we are instantiating the class
 #dates,snaps = "class_instance".generateRealTimeStats()
