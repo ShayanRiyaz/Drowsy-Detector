@@ -6,5 +6,3 @@ Flask==1.1.2
 googlemaps==4.4.2
 prettyprint==0.1.5
 Flask-SocketIO==4.3.1
-
-
