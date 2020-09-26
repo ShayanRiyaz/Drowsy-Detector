@@ -1,4 +1,0 @@
-{
-    "python.pythonPath": "VideoStreaming\\venv\\Scripts\\python.exe",
-    "python.autoComplete.extraPaths": ["./VideoStreaming"]
-}
