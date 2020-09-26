@@ -1,10 +1,27 @@
 <-- index.html -->
 <html>
   <head>
-    <title>Video Streaming Demonstration</title>
+    <link rel= "stylesheet" type= "text/css" href="{{ url_for('static',filename='styles/index.css') }}">
+    <script src="{{ url_for('static',filename='scripts/script.js') }}" ></script>
   </head>
   <body>
-    <h1>Video Streaming Demonstration</h1>
-    <img id="bg" src="{{ url_for('video_feed') }}">
+    <div class="grid-container">
+        <div id="videoplayback" class="VIDEO"><img id="bg" src="{{ url_for('video_feed') }}"></div>
+
+        <div id="mapsdiv" class="MAP">MAP HERE</div>
+
+        <div id="settingsdiv" class="SETTINGS">
+          <h1 style="color:black;">Settings</h1>
+          <button id="drowsybutton" type="button" onclick="onDrowsy()">Simulate Drowsy</button><br>
+          <input type="checkbox" id="alarmtoggle" name="alarmtoggle">
+          <label for="alarmtoggle">Alarm System</label><br>
+        </div>
+
+        <div id="notifsdiv" class="NOTIF">
+            <h1 style="color:black;">Status Notifications</h1>
+            <ul id="notiflist" style="list-style-type:none; text-align: center;">
+            </ul>
+        </div>
+    </div>
   </body>
 </html>

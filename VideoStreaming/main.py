@@ -1,5 +1,5 @@
 # main.py# import the necessary packages
-from flask import Flask, render_template, Response
+from flask import Flask, render_template, Response, send_from_directory
 from camera import VideoCamera
 import camera
 import time
@@ -30,6 +30,10 @@ def gen(camera):
 def video_feed():
     return Response(gen(VideoCamera()),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@app.route('/sounds/<path:filename>')
+def get_sound(filename):
+    return send_from_directory('/static/sounds/', filename)
 
 if __name__ == '__main__':
     # defining server ip address and port

@@ -1,0 +1,56 @@
+body {
+    background-color: #000f08;
+  }
+
+div {
+    overflow: auto;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+    gap: 1px 1px;
+    grid-template-areas:
+        "MAP MAP MAP MAP VIDEO VIDEO VIDEO"
+        "MAP MAP MAP MAP VIDEO VIDEO VIDEO"
+        "MAP MAP MAP MAP SETTINGS NOTIF NOTIF"
+        "MAP MAP MAP MAP SETTINGS NOTIF NOTIF";
+    height: 100%
+}
+
+.MAP { grid-area: MAP;}
+.VIDEO { 
+    grid-area: VIDEO;
+    text-align: center;
+    display: block;}
+.SETTINGS { grid-area: SETTINGS; }
+.NOTIF { grid-area: NOTIF; }
+
+#bg {
+    height:100%;
+    width:100%;
+}
+
+#videoplayback {
+    border: 2px solid #E0CA3C;
+    background-color: #E0CA3C;
+}
+
+#mapsdiv {
+    border: 2px solid #136f63;
+    background-color: #136f63;
+}
+
+#settingsdiv {
+    border: 2px solid #F34213;
+    background-color:#F34213;
+    color:white;
+}
+
+#notifsdiv {
+    border: 2px solid #3E2F5B;
+    background-color: #3E2F5B;
+    color:white;
+    text-align: center;
+}
