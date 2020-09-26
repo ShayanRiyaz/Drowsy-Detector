@@ -3,11 +3,11 @@ from imutils import face_utils
 import imutils
 import dlib
 import cv2
-
 import time
-
+from datetime import datetime
 
 class VideoCamera(object):
+    
     def __init__(self):
         self.video = cv2.VideoCapture(0)
         self.thresh = 0.25
@@ -22,7 +22,8 @@ class VideoCamera(object):
         (self.rStart,
          self.rEnd) = face_utils.FACIAL_LANDMARKS_68_IDXS["right_eye"]
         self.flag = 0
-
+        self.timestamp_record = []
+        
         # ## Readme
         # #New--code--Addded are the lines I have added in current code <br>
         #
@@ -38,7 +39,43 @@ class VideoCamera(object):
         self.count = 0  # to slow down stream of panic recommendations
         self.alert_flag = False
         self.alertOccurence = 0  # count of snapped occurence
+    
+    def generateRealTimeStats(self):
+ 
+        snaps = []
+        dates = []
 
+        def generateDateTime(seq,time): 
+
+            nonlocal snaps,dates
+
+            min_2 = 2*60    
+            snaps = snaps + [0]*seq
+
+            while seq > 0:
+                time += min_2
+                s_date = datetime.fromtimestamp(time).strftime('%y-%m-%d %a %H:%M')
+                dates.append(s_date)
+                seq -=1
+
+
+        start = self.timestamp_record[0]
+
+        for i in range(1,len(self.timestamp_record)):
+
+            tf = int((self.timestamp_record[i] - start) / 60)
+
+            if(tf <= 2):
+                snaps.append(self.alertCount[i-1])
+                dates.append(datetime.fromtimestamp(self.timestamp_record[i]).strftime('%y-%m-%d %a %H:%M'))
+            else:
+                generateDateTime(tf//2,self.timestamp_record[i-1])
+                snaps[-1] = self.alerCount[i-1]
+
+
+        return dates,snaps
+    
+    
     def __del__(self):
         self.video.release()
 
@@ -49,10 +86,11 @@ class VideoCamera(object):
         self.ear = (A + B) / (2.0 * C)
         return self.ear
 
-    def checkSeverity(self, start_time, timestamp_record):
+    def checkSeverity(self, start_time):
+        
         end_time = time.time()
         total_time = (end_time - start_time) / 60
-        next_slot = (end_time - timestamp_record[-1]) / 60
+        next_slot = (end_time - self.timestamp_record[-1]) / 60
 
         #print('Total Time Spend till now ',total_time)
         #print('Next Occurence occured within  ',next_slot)
@@ -61,17 +99,22 @@ class VideoCamera(object):
             self.alertCount[-1] += 1
         else:
             self.alertCount.append(1)
-            timestamp_record.append(end_time)
+            self.timestamp_record.append(end_time)
 
         if(self.alertCount[-1] > self.max_thres or (total_time < 10 and self.alertOccurence >= 10)):
             print('Alert is Emergency')
         else:
             print('Give Nearby Recommendations')
 
-    def get_frame(self,start_time,timestamp_record):
+    def get_frame(self,start_time):
+        
         ret, frame = self.video.read()
         frame = imutils.resize(frame, width=450)
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        
+        start_time = time.time() #New---Code--Added
+        self.timestamp_record.append(start_time) #New---Code--Added
+
         subjects = self.detect(gray, 0)
         for subject in subjects:
             shape = self.predict(gray, subject)
@@ -97,16 +140,16 @@ class VideoCamera(object):
                     self.alert_flag = True  # New---Code--Added
             else:
                 self.flag = 0
+                
         # New---Code--Added
         if(self.alert_flag):
             self.count += 1
 
             if(self.count % 15 == 0):
                 self.alertOccurence += 1
-                self.checkSeverity(start_time, timestamp_record)
+                self.checkSeverity(start_time)
 
             self.alert_flag = False
-    # New---Code--Added
-        
+        # New---Code--Added
         ret, jpeg = cv2.imencode('.jpg', frame)
         return jpeg.tobytes()
