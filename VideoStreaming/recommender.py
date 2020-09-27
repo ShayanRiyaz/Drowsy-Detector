@@ -24,9 +24,7 @@ def googlemaps():
     #     fields = ['name', 'formatted_phone_number', 'geometry/location']
     #     place_details = gmaps.place(place_id=place_id, fields=fields)
     #     print(place_details)
-    print('\n\n')
     print('\n\n\n')
-
     # for place in places_result['results']:
     #     place_id = place['place_id']
     #     fields = ['name', 'formatted_phone_number', 'geometry/location']
