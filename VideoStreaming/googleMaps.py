@@ -31,5 +31,7 @@ def googlemaps():
         place_details = gmaps.place(place_id=place_id, fields=fields)
         print(place_details)
 
+    return places_result
+
 
 googlemaps()
