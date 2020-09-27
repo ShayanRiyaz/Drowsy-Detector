@@ -1,21 +1,25 @@
 var socket = io();
+
+// On connect, let server know
+socket.on('connect', function() {
+    socket.emit('connected_event', {data: 'Connected!'});
+});
+
+// When receiving a drowsy alert, activate the onDrowsey function
 socket.on('drowsy_alert', (data) => {
     onDrowsy(data);
 });
 
-socket.on('graph_data', (data) => {
-    onGraphData(data);
-});
-
-
+// For receiving end of ride data
 // socket.on('end_ride_data', (data) => {
-
+// TODO
 // });
 
-var numDrowsy = 0;
+var numDrowsy = 0; // Number of drowsy occurances per 30 seconds
 var graphLabels = [];
 var graphData = [];
 
+// Called on simulated/genuine drowsy event
 function onDrowsy(data) {
     // Get the time of drowsiness
     const now = new Date();
@@ -44,7 +48,7 @@ function onDrowsy(data) {
     // Make sure to be scrolled to bottom
     notifDiv.scrollTop = notifDiv.scrollHeight;
 
-    // If alarm
+    // If alarm is activated, play alarm
     var alarmCheck = document.getElementById("alarmtoggle");
     if(alarmCheck.checked) {
         var alarmsound = new Audio("/static/sounds/alarm.mp3");
@@ -52,6 +56,7 @@ function onDrowsy(data) {
     }
 }
 
+// Tell the server that the ride is over
 function endRide() {
     socket.emit("end_ride");
 }
@@ -91,28 +96,28 @@ function updateGraphData() {
     });
 }
 
-// Call updateGraphData every 30 seconds
+// Update the graph every 30 seconds
 setInterval(updateGraphData, 30 * 1000);
 
+// Function to swap the drowsy notifications with graph
 function SwapNotifGraph()
 {
-    var d1 = document.getElementById("graphdiv");
-    var d2 = document.getElementById("notifsdiv");
+    const graphDivider = document.getElementById("graphdiv");
+    const notifDivider = document.getElementById("notifsdiv");
 
-    var btn = document.getElementById("swapbutton");
+    let btn = document.getElementById("swapbutton");
 
     // Notif divider hidden
-    if( d2.style.display == "none" )
+    if( notifDivider.style.display == "none" )
     {
-        d1.style.display = "none";
-        d2.style.display = "block";
+        graphDivider.style.display = "none";
+        notifDivider.style.display = "block";
         btn.innerHTML = "Show Graph";
     }
     else // Graph divider hidden
     {
-        d1.style.display = "block";
-        d2.style.display = "none";
+        graphDivider.style.display = "block";
+        notifDivider.style.display = "none";
         btn.innerHTML = "Show Notifications";
-
     }
 }

@@ -43,6 +43,10 @@ def video_feed():
 def get_sound(filename):
     return send_from_directory('/static/sounds/', filename)
 
+@app.route('/favicon.ico')
+def get_favicon():
+    return send_from_directory('/static/icons/','favicon.ico')
+
 @socketio.on('end_ride')
 def end_ride():
     stats_tup = cam.generateRealTimeStats()
