@@ -10,7 +10,7 @@ import cv2
 
 app = Flask(__name__)
 socketio = SocketIO(app)
-
+cam = VideoCamera(socket=socketio)
 
 @app.route('/')
 def index():
@@ -21,7 +21,6 @@ def index():
 def about():
     return render_template('aboutPage.html')
 
-    
 def gen(camera):
     #start_time = time.time() #New---Code--Added
     #timestamp_record.append(start_time) #New---Code--Added
@@ -37,14 +36,21 @@ def gen(camera):
                 
 @app.route('/video_feed')
 def video_feed():
-    return Response(gen(VideoCamera(socket=socketio)),
+    return Response(gen(cam),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route('/sounds/<path:filename>')
 def get_sound(filename):
     return send_from_directory('/static/sounds/', filename)
 
-@socketio.on('my event')
+@socketio.on('end_ride')
+def end_ride():
+    stats_tup = cam.generateRealTimeStats()
+    print(stats_tup)
+    print(stats_tup[0])
+    print(stats_tup[1])
+
+@socketio.on('connected_event')
 def handle_message(json):
     print('received json: ' + str(json))
 

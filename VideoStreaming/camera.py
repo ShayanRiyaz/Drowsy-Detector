@@ -66,14 +66,14 @@ class VideoCamera(object):
             tf = int((self.timestamp_record[i] - start) / 60)
 
             if(tf <= 2):
+                print(f'size of alertCount is {len(self.alertCount)}')
                 snaps.append(self.alertCount[i-1])
                 dates.append(datetime.fromtimestamp(self.timestamp_record[i]).strftime('%y-%m-%d %a %H:%M'))
             else:
                 generateDateTime(tf//2,self.timestamp_record[i-1])
-                snaps[-1] = self.alerCount[i-1]
+                snaps[-1] = self.alertCount[i-1]
 
-
-        return dates,snaps
+        return (dates, snaps)
     
     
     def __del__(self):
@@ -120,9 +120,16 @@ class VideoCamera(object):
         if self.socket is not None:
             data = {'data':signal_type}
             self.socket.emit('drowsy_alert', data)
+            # broken for now, may implement in js directly
+            # graph_tuple = self.generateRealTimeStats()
+            # emit_graph_data(graph_tuple)
     
     def emit_graph_data(self, data_tuple):
-        pass  
+        data = {
+            "lables":data_tuple[0],
+            "data":data_tuple[1]
+        }
+        self.socket.emit('graph_data',data)
 
     def get_frame(self):
         

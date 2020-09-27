@@ -4,10 +4,11 @@
     <link rel= "stylesheet" type= "text/css" href="{{ url_for('static',filename='styles/index.css') }}">
     <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
     <script src="{{ url_for('static',filename='scripts/script.js') }}" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
     <script type="text/javascript" charset="utf-8">
       var socket = io();
       socket.on('connect', function() {
-          socket.emit('my event', {data: 'I\'m connected!'});
+          socket.emit('connected_event', {data: 'Connected!'});
       });
   </script>
   </head>
@@ -25,6 +26,8 @@
         <div id="settingsdiv" class="SETTINGS">
           <h1 style="color:black;">Settings</h1>
           <button id="drowsybutton" type="button" onclick="onDrowsy()">Simulate Drowsy</button><br>
+          <button id="swapbutton" type="button" onclick="SwapNotifGraph()">View Graph</button><br>
+          <button id="endridebutton" type="button" onclick="endRide()">End Ride</button><br>
           <input type="checkbox" id="alarmtoggle" name="alarmtoggle">
           <label for="alarmtoggle">Alarm System</label><br>
         </div>
@@ -32,6 +35,8 @@
             <h1 style="color:black;">Status Notifications</h1>
             <ul id="notiflist" style="list-style-type:none; text-align: center;"></ul>
         </div>
-    </div>
+        <div id="graphdiv" class="NOTIF" style="display:none;">
+          <canvas id="myChart" width="400" height="400"></canvas>
+      </div>
   </body>
 </html>
