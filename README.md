@@ -1,4 +1,4 @@
-# <div align = "center">Drowsy-Detector</div>
+# <div align = "center">Drowsy Detector</div>
 
 <p align="center">
   <img src="logo.png">
