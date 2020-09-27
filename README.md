@@ -1,4 +1,8 @@
-# Drowsy-Guide
+
+
+# Drowsy-Detector
+
+<src img = "logo.png">
 
 ## ShellHacks Competition
 
