@@ -22,7 +22,7 @@ class VideoCamera(object):
         (self.mStart,self.mEnd) = face_utils.FACIAL_LANDMARKS_68_IDXS["mouth"]
         
         self.flag = 0
-        self.timestamp_record = []
+        # self.timestamp_record = []
         self.socket = socket
         # ## Readme
         # #New--code--Addded are the lines I have added in current code <br>
@@ -59,25 +59,26 @@ class VideoCamera(object):
                 seq -=1
 
 
-        start = self.timestamp_record[0]
+        start = timestamp_record[0]
 
-        for i in range(1,len(self.timestamp_record)):
+        for i in range(1,len(timestamp_record)):
 
-            tf = int((self.timestamp_record[i] - start) / 60)
+            tf = int((timestamp_record[i] - start) / 60)
 
             if(tf <= 2):
                 print(f'size of alertCount is {len(self.alertCount)}')
                 snaps.append(self.alertCount[i-1])
-                dates.append(datetime.fromtimestamp(self.timestamp_record[i]).strftime('%y-%m-%d %a %H:%M'))
+                dates.append(datetime.fromtimestamp(timestamp_record[i]).strftime('%y-%m-%d %a %H:%M'))
             else:
-                generateDateTime(tf//2,self.timestamp_record[i-1])
+                generateDateTime(tf//2,timestamp_record[i-1])
                 snaps[-1] = self.alertCount[i-1]
 
-        return (dates, snaps)
+        return dates, snaps
     
     
     def __del__(self):
         self.video.release()
+        # cv2.destroyAllWindows()
 
     def eye_aspect_ratio(self, eye):
         A = distance.euclidean(eye[1], eye[5])
@@ -94,11 +95,10 @@ class VideoCamera(object):
     
         return ear
 
-    def checkSeverity(self, start_time):
-        
+    def checkSeverity(self,start_time, timestamp_record):
         end_time = time.time()
         total_time = (end_time - start_time) / 60
-        next_slot = (end_time - self.timestamp_record[-1]) / 60
+        next_slot = (end_time - timestamp_record[-1]) / 60
 
         #print('Total Time Spend till now ',total_time)
         #print('Next Occurence occured within  ',next_slot)
@@ -107,7 +107,7 @@ class VideoCamera(object):
             self.alertCount[-1] += 1
         else:
             self.alertCount.append(1)
-            self.timestamp_record.append(end_time)
+            timestamp_record.append(end_time)
 
         if(self.alertCount[-1] > self.max_thres or (total_time < 10 and self.alertOccurence >= 10)):
             print('Alert is Emergency')
@@ -115,30 +115,20 @@ class VideoCamera(object):
         else:
             self.emit_drowsy_signal("standard")
             print('Give Nearby Recommendations')
+        return timestamp_record
 
-    def emit_drowsy_signal(self, signal_type):
+    def emit_drowsy_signal(self):
         if self.socket is not None:
-            data = {'data':signal_type}
+            data = {'data':"alert"}
             self.socket.emit('drowsy_alert', data)
-            # broken for now, may implement in js directly
-            # graph_tuple = self.generateRealTimeStats()
-            # emit_graph_data(graph_tuple)
-    
-    def emit_graph_data(self, data_tuple):
-        data = {
-            "lables":data_tuple[0],
-            "data":data_tuple[1]
-        }
-        self.socket.emit('graph_data',data)
 
-    def get_frame(self):
-        
+    def get_frame(self,start_time,timestamp_record):
         ret, frame = self.video.read()
         frame = imutils.resize(frame, width=450)
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         
-        start_time = time.time() #New---Code--Added
-        self.timestamp_record.append(start_time) #New---Code--Added
+        # start_time = time.time() #New---Code--Added
+        # self.timestamp_record.append(start_time) #New---Code--Added
 
         subjects = self.detect(gray, 0)
         
@@ -171,20 +161,24 @@ class VideoCamera(object):
                                 cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
                     cv2.putText(frame, "****************ALERT!****************", (10, 325),
                                 cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-                    #print ("Drowsy")
-                    self.alert_flag = True  # New---Code--Added
+                    self.count += 1
+                    if(self.count % 12 == 0):
+                        self.emit_drowsy_signal()
+                    
+                    # print ("Drowsy")
+                    # self.alert_flag = True  # New---Code--Added
             else:
                 self.flag = 0
                 
         # New---Code--Added
-        if(self.alert_flag):
-            self.count += 1
+        # if(self.alert_flag):
+            # self.count += 1
+            
+            # if(self.count % 12 == 0):
+            #     self.alertOccurence += 1
+            #     timestamp_record = self.checkSeverity(start_time, timestamp_record)
 
-            if(self.count % 12 == 0):
-                self.alertOccurence += 1
-                self.checkSeverity(start_time)
-
-            self.alert_flag = False
+            # self.alert_flag = False
         # New---Code--Added
         ret, jpeg = cv2.imencode('.jpg', frame)
         return jpeg.tobytes()

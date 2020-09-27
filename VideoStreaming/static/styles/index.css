@@ -1,9 +1,8 @@
+html,
 body {
-    background-color: #000f08;
-  }
-
-div {
-    overflow: auto;
+    height: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 .grid-container {
@@ -42,6 +41,10 @@ div {
     background-color: #136f63;
 }
 
+#map {
+    height: 100%;   
+}
+
 #settingsdiv {
     border: 2px solid #F34213;
     background-color:#F34213;
@@ -53,4 +56,5 @@ div {
     background-color: #3E2F5B;
     color:white;
     text-align: center;
+    overflow: auto;
 }

@@ -1,3 +1,35 @@
+var directionsService;
+var directionsRenderer;
+var map;
+
+function initMap() {
+    directionsService = new google.maps.DirectionsService();
+    directionsRenderer = new google.maps.DirectionsRenderer();
+    var chicago = new google.maps.LatLng(41.850033, -87.6500523);
+    var mapOptions = {
+      zoom:7,
+      center: chicago
+    }
+    map = new google.maps.Map(document.getElementById('map'), mapOptions);
+    directionsRenderer.setMap(map);
+}
+
+function calcRoute(start, end) {
+    var request = {
+        origin: start,
+        destination: end,
+        travelMode: 'DRIVING'
+    };
+
+    directionsService.route(request, function(result, status) {
+        if (status == 'OK') {
+        directionsRenderer.setDirections(result);
+        }
+    });
+}
+
+
+
 var socket = io();
 
 // On connect, let server know
@@ -9,6 +41,90 @@ socket.on('connect', function() {
 socket.on('drowsy_alert', (data) => {
     onDrowsy(data);
 });
+
+socket.on('no_location', () =>{
+    // Get the notification list
+    var ul = document.getElementById("notiflist");
+
+    // Create a new list element
+    var li = document.createElement("li");
+    li.appendChild(document.createTextNode("No route available for these locations, Try again."));
+
+    // Add it to the list
+    ul.appendChild(li);
+
+    // Get the Notification divider
+    var notifDiv = document.getElementById("notifsdiv");
+
+    // Make sure to be scrolled to bottom
+    notifDiv.scrollTop = notifDiv.scrollHeight;
+});
+
+socket.on('location', (data) => {
+    // console.log(data);
+    simulate_user(data);
+});
+
+socket.on('nearby_locations', (data) => {
+    console.log(data.data);
+    for(let i = 1; i < Object.keys(data.data).length; i++){
+        let current_location = data.data[i];
+        let current_lat = current_location.loc.lat;
+        let current_lon = current_location.loc.lng;
+        let current_name = current_location.name;
+        let current_open_status = current_location.open;
+
+        let infoStr = current_open_status;
+        let titleStr = current_name;
+        draw_info_window(current_lat, current_lon, infoStr, titleStr);
+    }
+});
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+var userLon = 0;
+var userLat = 0;
+async function simulate_user(data){
+    let coords = data.data;
+    console.log(coords.length);
+    console.log(coords);
+    for(let i = 0; i < coords.length; i+=50){
+        let current_lat = coords[i][0];
+        let current_lon = coords[i][1];
+        userLat = current_lat;
+        userLon = current_lon;
+        draw_marker(current_lat,current_lon);
+        sleep(10000);
+    }
+}
+
+
+function draw_marker(lat,lng){
+    let myLatlng = new google.maps.LatLng(lat,lng);
+    let marker = new google.maps.Marker({
+        position: myLatlng,
+        title:"Hello World!"
+    });
+    marker.setMap(map);
+}
+
+function draw_info_window(lat, lng, infoStr, titleStr){
+    let infowindow = new google.maps.InfoWindow({
+        content: "<div>" + titleStr + " is open to visit!" + "<br> Stay Safe, Take a break" + "</div>"
+      });
+
+    let myLatlng = new google.maps.LatLng(lat,lng);
+    let marker = new google.maps.Marker({
+        position: myLatlng,
+        map,
+        title: titleStr
+    });
+    marker.addListener('click', function() {
+        infowindow.open(map, marker);
+      });    
+}
 
 // For receiving end of ride data
 // socket.on('end_ride_data', (data) => {
@@ -48,6 +164,12 @@ function onDrowsy(data) {
     // Make sure to be scrolled to bottom
     notifDiv.scrollTop = notifDiv.scrollHeight;
 
+    const user_data = {
+        userLon: userLon,
+        userLat: userLat
+    }
+    socket.emit('user_location', user_data);
+    
     // If alarm is activated, play alarm
     var alarmCheck = document.getElementById("alarmtoggle");
     if(alarmCheck.checked) {
@@ -56,10 +178,13 @@ function onDrowsy(data) {
     }
 }
 
-// Tell the server that the ride is over
-function endRide() {
-    socket.emit("end_ride");
-}
+
+
+// // Tell the server that the ride is over
+// function endRide() {
+//     calcRoute()
+//     // socket.emit("end_ride");
+// }
 
 function updateGraphData() {
     var ctx = document.getElementById('drowsy_graph');
@@ -120,4 +245,15 @@ function SwapNotifGraph()
         notifDivider.style.display = "none";
         btn.innerHTML = "Show Notifications";
     }
+}
+
+function submit_location(){
+    const start_location = document.getElementById("startlocation").value;
+    const end_location = document.getElementById("endlocation").value;
+    calcRoute(start_location,end_location);
+    data = {
+        start_location: start_location,
+        end_location: end_location
+    }
+    socket.emit("location_data", data);
 }
