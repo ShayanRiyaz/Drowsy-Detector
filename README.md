@@ -1,7 +1,7 @@
 # <div align = "center">Drowsy-Detector</div>
 
-<p>
-<img src="logo.png" align="center">
+<p align="center">
+  <img src="logo.png">
 </p>
 
 ## ShellHacks Competition
