@@ -42,7 +42,7 @@ Creates a simulated user path from ```start_address``` to ```end_address``. This
  Gets the users current-coodinates and When Drowsey alert is recieved finds the closest ```gas_station```
 
 ### Step 4
-```generateRealTimeStats(self)``` :Generates the Drowsy instance vs time graph.
+``` updateGraphData()``` :Function in /VideoStreaming/static/scripts/script.js Updates the Drowsy instance vs time graph.
 
 
 
