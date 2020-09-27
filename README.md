@@ -2,7 +2,7 @@
 
 # Drowsy-Detector
 
-<src img = "logo.png">
+<img src="logo.png">
 
 ## ShellHacks Competition
 
