@@ -1,8 +1,8 @@
 
 
-# Drowsy-Detector
+# <div align = "center">Drowsy-Detector</div>
 
-<img src="logo.png">
+<img src="logo.png" align="center">
 
 ## ShellHacks Competition
 
