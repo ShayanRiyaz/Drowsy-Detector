@@ -63,8 +63,8 @@ route_json = get_route_lat_long(API_KEY, start_lang, start_long,
                    end_lang, end_long)
 #print(route_json)
 distance_and_time = get_time_and_distance(route_json)
-print(distance_and_time)
+# print(distance_and_time)
 journey_coords = get_lat_long_from_route(route_json)
-print(journey_coords)
+# print(journey_coords)
 
 # https://maps.googleapis.com/maps/api/directions/json?origin=37.3828025,-122.0791124&key=AIzaSyBSDl8S2NWX5GwJHvLaQ2PMVJSSxur033Q&destination=37.7862756, -122.4749331&mode=driving&sensor=false
