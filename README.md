@@ -16,8 +16,6 @@ How to run for now:
 ```python VideoStreaming/main.py```
 
 
-
-
 ## Functions
 
 ### Step 1
@@ -26,20 +24,23 @@ How to run for now:
 Uses camera to track the users eyes, in case user has eyes closed for more than 15 frames, send ```Alert```.
 '''
 ### Step 2
-```lat,long = DrowseyAlertMessage()```
-'''
-When Drowsey alert is recieved,get users current lat,long and go to step 2.
-'''
+```
+def simulated_user_path(start_address, end_address):
+    points = get_points_along_path(API_KEY,start_address,end_address)
 
+    times,coords = [],[]
+    for time,geo in points.items():
+        times.append(times)
+        coords.append(geo)
+    
+    return times,coords
+```
+ 
 ### Step 3 
- ```places = google_maps(lat,long)``` 
- ''' Gets the users current-coodinates
- '''
+ ```find_places(journey_coords_1,journey_coords_2)``` 
+ Gets the users current-coodinates and When Drowsey alert is recieved finds the closest ```gas_station```
 
 ### Step 4
- ```place = findKnearest(places)```
-  '''
- Looks for the nearest ```rest_areas``` from the given lat,long coordinates and returns the closest one
- '''
+```generateRealTimeStats(self)``` :Generates the Drowsy instance vs time graph.
 
 
