@@ -119,24 +119,19 @@ def generate_polyline(points):
     return encode_polyline(points.values())    
 
 
-if __name__ == '__main__':
-    if len(sys.argv) < 3:
-        print('Usage: python ' + sys.argv[0] + ' <Google Maps API key> "From Address"  "To Address"')
-        print('For example')
-        print('Usage: python ' + sys.argv[0] + ' AJGHJ23242hBdDAXJDOSS "HashedIn Technologies, Bangalore"  "World Trade Centre, Bangalore"')
-        exit(-1)
-
-    points = get_points_along_path(sys.argv[1], sys.argv[2], sys.argv[3])
-    polyline = generate_polyline(points)
-
-    #print("List of points along the route")
-    #print("------------------------------")
-    #for time, geo in points.items():
-    #    print(time, geo)
-
-    #print("Polyline for this route")
-    #print(polyline)
-    #print("")
-    #print("Hint: To visualize this route, copy the polyline and paste it in the textfield called Encoded Polyline over here - https://developers.google.com/maps/documentation/utilities/polylineutility")
+API_KEY = 'AIzaSyBSDl8S2NWX5GwJHvLaQ2PMVJSSxur033Q'
+address_1 = 'San Jose,CA'
+address_2 = 'San Francisco, CA'
+points = get_points_along_path(API_KEY,address_1,address_2)
 
 
+times,coords = [],[]
+for time,geo in points.items():
+    times.append(times)
+    coords.append(geo)
+
+
+
+
+print(times)
+print(coords)
