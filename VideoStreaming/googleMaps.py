@@ -81,7 +81,7 @@ def find_places(journey_coords_1,journey_coords_2):
 
     # This gets the places near the Current location
     places = gmaps.places(query="Rest Stops", location='25.751496994, -80.37333184', radius=4000, open_now=True)
-    #pprint.pprint(places)
+    # pprint.pprint(places)
     for place in places['results']:
         place_id = place['place_id']
         fields = ['name', 'formatted_phone_number', 'geometry/location']
