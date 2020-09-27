@@ -57,7 +57,7 @@ function endRide() {
 }
 
 function updateGraphData() {
-    var ctx = document.getElementById('myChart');
+    var ctx = document.getElementById('drowsy_graph');
 
     const now = new Date();
     const hours = String(now.getHours()).padStart(2, '0');
@@ -73,7 +73,7 @@ function updateGraphData() {
 
     // Reset numDrowsy
     numDrowsy = 0;
-    var myChart = new Chart(ctx,
+    var drowsy_graph = new Chart(ctx,
     {
         type:"line",
         data:

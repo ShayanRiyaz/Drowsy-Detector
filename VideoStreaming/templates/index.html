@@ -1,4 +1,3 @@
-<-- index.html -->
 <html>
   <head>
     <link rel= "stylesheet" type= "text/css" href="{{ url_for('static',filename='styles/index.css') }}">
@@ -36,7 +35,31 @@
             <ul id="notiflist" style="list-style-type:none; text-align: center;"></ul>
         </div>
         <div id="graphdiv" class="NOTIF" style="display:none;">
-          <canvas id="myChart" width="400" height="400"></canvas>
+          <canvas id="drowsy_graph" width="100%" height="90%"></canvas>
+          <script>
+            var ctx = document.getElementById('drowsy_graph');
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const time = hours + ":" + minutes + ":" + seconds;
+            var drowsy_graph = new Chart(ctx,
+            {
+                type:"line",
+                data:
+                {
+                    "labels":[],
+                    "datasets":[{
+                        "label":"Drowsy Occurrances",
+                        "data":[],
+                        "fill":false,
+                        "borderColor":"rgb(75, 192, 192)",
+                        "lineTension":0.1
+                    }]
+                },
+                options:{}
+            });
+          </script>
       </div>
   </body>
 </html>
